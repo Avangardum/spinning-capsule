@@ -3,19 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
+    public float Speed;
+    
     [SerializeField] private float spinTime;
-    [SerializeField] private float speed;
-
+    [SerializeField] private float minSpeed;
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float deltaSpeedPerSpin;
+    [SerializeField] private float deltaSpeedPerSecond;
+    
     private float _rotationSpeed;
     private bool _isRotating;
-    private bool _isTurningTo0;
+    private bool _isTurningTo0 = true;
     private float _zRotation;
     private float _ditancePassedThisSpin;
 
     private float DesiredZRotation => _isTurningTo0 ? -360 : -180;
-    private float DistancePassedPerSpin => speed * spinTime;
+    private float DistancePassedPerSpin => Speed * spinTime;
 
     private float ZRotation
     {
@@ -33,6 +38,7 @@ public class PlayerController : MonoBehaviour
     
     private void Awake()
     {
+        Speed = minSpeed;
         _rotationSpeed = -180 / spinTime;
     }
 
@@ -46,6 +52,11 @@ public class PlayerController : MonoBehaviour
             {
                 ZRotation = DesiredZRotation;
                 _isRotating = false;
+                Speed += deltaSpeedPerSpin;
+                if (Speed > maxSpeed)
+                {
+                    Speed = maxSpeed;
+                }
             }
             else
             {
@@ -53,8 +64,7 @@ public class PlayerController : MonoBehaviour
             }
 
 
-
-            float deltaX = speed * Time.deltaTime;
+            float deltaX = Speed * Time.deltaTime;
             float distanceLeft = DistancePassedPerSpin - _ditancePassedThisSpin;
             if (deltaX > distanceLeft)
             {
@@ -62,6 +72,13 @@ public class PlayerController : MonoBehaviour
             }
             transform.Translate(new Vector3(deltaX, 0, 0), Space.World);
             _ditancePassedThisSpin += deltaX;
+        }
+        
+        
+        Speed += deltaSpeedPerSecond * Time.fixedDeltaTime;
+        if (Speed < minSpeed)
+        {
+            Speed = minSpeed;
         }
     }
 
