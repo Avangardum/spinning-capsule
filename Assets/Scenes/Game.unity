@@ -573,7 +573,7 @@ MonoBehaviour:
   minSpeed: 2
   maxSpeed: 10
   deltaSpeedPerSpin: 1
-  deltaSpeedPerSecond: -0.5
+  deltaSpeedPerSecond: -0.3
 --- !u!1 &1413613127
 GameObject:
   m_ObjectHideFlags: 0
